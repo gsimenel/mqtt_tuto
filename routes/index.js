@@ -12,9 +12,28 @@ router.get('/', function(req, res, next) {
 /* POST data */ 
 router.post('/data', auth.basicAuthentication, function(req, res, next) {
     logger.info("POST" + JSON.stringify(req.body));
-    // return the body received 
-    res.send(JSON.stringify(req.body));
     
+    req.checkBody("time", "Enter a valid timestamp").isInt();
+    req.checkBody("device", "Enter an hexa number").isHexadecimal();
+    req.checkBody("duplicate", "Enter true/false").isBoolean();
+    req.checkBody("snr", "Enter a valid float").isFloat();
+    req.checkBody("avgSnr", "Enter a valid float").isFloat();
+    req.checkBody("station", "Enter a valid Station ID").isHexadecimal();
+    req.checkBody("lat", "Enter a valid lat").isInt();
+    req.checkBody("lng", "Enter a valid lng").isInt();
+    req.checkBody("seqNumber", "Enter a valid seq").isInt();
+    req.checkBody("data", "Enter a valid data").isHexadecimal();
+    
+    var errors = req.validationErrors();
+    if (errors) {
+        res.send(errors);
+        return;
+    } else {
+        // Normal processing 
+        // return the body received 
+        res.send(JSON.stringify(req.body));
+    }
+
 });
 
 module.exports = router;
