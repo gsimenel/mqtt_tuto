@@ -3,6 +3,8 @@ var router = express.Router();
 var logger = require('../logger.js');
 var auth = require('../auth.js');
 
+var mqtt = require('../mqtt.js');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Express' });
@@ -26,11 +28,13 @@ router.post('/data', auth.basicAuthentication, function(req, res, next) {
     
     var errors = req.validationErrors();
     if (errors) {
+        logger.error(errors);
         res.send(errors);
         return;
     } else {
         // Normal processing 
         // return the body received 
+        mqtt.publish( req.body.device, 'test', req.body.data);
         res.send(JSON.stringify(req.body));
     }
 
